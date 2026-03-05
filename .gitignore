@@ -137,3 +137,4 @@ dist
 
 # IDE
 .idea
+/generated/prisma
