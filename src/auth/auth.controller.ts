@@ -13,7 +13,7 @@ export class AuthController {
 
     @Public()
     @Post('register')
-    async register(dto: RegisterDto): Promise<void> {
+    async register(dto: RegisterDto): Promise<boolean> {
         return this.authService.register(dto);
     }
 

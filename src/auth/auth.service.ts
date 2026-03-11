@@ -2,50 +2,41 @@ import {BadRequestException, Injectable, UnauthorizedException} from '@nestjs/co
 import {RegisterDto} from "./dto/register.dto";
 import * as argon2 from 'argon2';
 import {LoginDto} from "./dto/login.dto";
-import {PrismaService} from "../prisma/prisma.service";
 import {JwtService} from "@nestjs/jwt";
+import {UserService} from "../user/user.service";
+import {Prisma} from "@prisma/client";
 
 @Injectable()
 export class AuthService {
     constructor(
-        private readonly prisma: PrismaService,
+        private readonly userService: UserService,
         private readonly jwtService: JwtService,
     ) {}
 
-    async register(dto: RegisterDto): Promise<void> {
+    async register(dto: RegisterDto): Promise<boolean> {
+        const exist = await this.userService.findUserByEmailOrLogin({
+            email: dto.email,
+            login: dto.login,
+        });
+        if (exist) throw new BadRequestException('User already exists');
+
         const hash = await argon2.hash(dto.password);
-        const exist = await this.prisma.user.findFirst({
-            where: {
-                OR: [
-                    {login: dto.login},
-                    {email: dto.email},
-                ]
+        try {
+            await this.userService.createUser({ login: dto.login, email: dto.email, password: hash });
+        } catch (e) {
+            if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+                throw new BadRequestException('User with this email or login already exists');
             }
-        })
-        if (exist) {throw new BadRequestException('User already exists');}
-        await this.prisma.user.create({
-            data: {
-                login: dto.login,
-                email: dto.email,
-                password: hash,
-            }
-        })
+            throw e;
+        }
+        return true;
     }
 
     async login(dto: LoginDto): Promise<{access_token: string}> {
-        const user = await this.prisma.user.findFirst({
-            select: {
-                id: true,
-                login: true,
-                password: true
-            },
-            where: {
-                OR: [
-                    {login: dto.loginOrEmail},
-                    {email: dto.loginOrEmail}
-                ]
-            }
-        });
+        const user = await this.userService.findUserByEmailOrLogin({
+            login: dto.loginOrEmail,
+            email: dto.loginOrEmail
+        })
         if (!user) throw new UnauthorizedException()
 
         const isVerify = await argon2.verify(user?.password, dto.password)
