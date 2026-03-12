@@ -28,10 +28,10 @@ This repository for base auth schema.
 
 ## Project setup
 
-orm - prisma\
-db - pg\
-hash - argon\
-auth - jwt web token
+- orm - prisma
+- db - pg
+- hash - argon
+- auth - jwt web token
 
 ## Project setup
 
@@ -51,6 +51,12 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+
+## Variables
+add file .env in root repository and inter variable
+
+- DATABASE_URL
+- JWT_SECRET
 
 ## Run tests
 
