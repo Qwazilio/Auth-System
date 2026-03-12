@@ -25,7 +25,7 @@ import {ConfigModule} from "@nestjs/config";
       JwtStrategy, //Не забывать зарегать стратежи
       {
         provide: APP_GUARD,
-        useValue: JwtAuthGuard,
+        useClass: JwtAuthGuard, //Юзкласс обязательно
       },
       AppService,
   ],

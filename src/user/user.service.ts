@@ -28,7 +28,7 @@ export class UserService {
 
     //Геты для конечной операции
     async getUser(id: number): Promise<Partial<User>> {
-        const user = this.prisma.user.findUnique({
+        const user = await this.prisma.user.findUnique({
             select: {
                 id: true,
                 login: true,

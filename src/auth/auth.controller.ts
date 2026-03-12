@@ -1,4 +1,4 @@
-import {Controller, Post} from '@nestjs/common';
+import {Body, Controller, Post} from '@nestjs/common';
 import {AuthService} from "./auth.service";
 import {RegisterDto} from "./dto/register.dto";
 import {LoginDto} from "./dto/login.dto";
@@ -13,13 +13,17 @@ export class AuthController {
 
     @Public()
     @Post('register')
-    async register(dto: RegisterDto): Promise<boolean> {
+    async register(
+        @Body() dto: RegisterDto
+    ): Promise<boolean> {
         return this.authService.register(dto);
     }
 
     @Public()
     @Post('login')
-    async login(dto: LoginDto): Promise<{access_token: string}> {
+    async login(
+        @Body() dto: LoginDto
+    ): Promise<{access_token: string}> {
         return this.authService.login(dto);
     }
 }

@@ -15,14 +15,14 @@ export class AuthService {
 
     async register(dto: RegisterDto): Promise<boolean> {
         const exist = await this.userService.findUserByEmailOrLogin({
-            email: dto.email,
-            login: dto.login,
+            email: dto.email.toLowerCase(),
+            login: dto.login.toLowerCase(),
         });
         if (exist) throw new BadRequestException('User already exists');
 
         const hash = await argon2.hash(dto.password);
         try {
-            await this.userService.createUser({ login: dto.login, email: dto.email, password: hash });
+            await this.userService.createUser({ login: dto.login.toLowerCase(), email: dto.email.toLowerCase(), password: hash });
         } catch (e) {
             if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
                 throw new BadRequestException('User with this email or login already exists');
@@ -34,8 +34,8 @@ export class AuthService {
 
     async login(dto: LoginDto): Promise<{access_token: string}> {
         const user = await this.userService.findUserByEmailOrLogin({
-            login: dto.loginOrEmail,
-            email: dto.loginOrEmail
+            login: dto.loginOrEmail.toLowerCase(),
+            email: dto.loginOrEmail.toLowerCase(),
         })
         if (!user) throw new UnauthorizedException()
 
@@ -46,7 +46,6 @@ export class AuthService {
             sub: user.id,
             login: user.login
         };
-
-        return { access_token: this.jwtService.sign(payload)};
+        return { access_token: this.jwtService.sign(payload) };
     }
 }
