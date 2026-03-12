@@ -29,4 +29,5 @@ model User{
   updatedAt DateTime @updatedAt
 
   //Сюда можно и токены закинуть
+  refreshToken String
 }

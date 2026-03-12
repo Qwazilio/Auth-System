@@ -46,6 +46,22 @@ export class AuthService {
             sub: user.id,
             login: user.login
         };
+
+        const tokens = await this.getTokens(user.id, user.email);
+
         return { access_token: this.jwtService.sign(payload) };
+    }
+
+    async getTokens(userId: number, email: string) {
+        const [accessToken, refreshToken] = await Promise.all([
+            this.jwtService.signAsync({ sub: userId, email }, { expiresIn: '15m', secret: process.env.JWT_SECRET }),
+            this.jwtService.signAsync({ sub: userId, email }, { expiresIn: '7d', secret: process.env.JWT_REFRESH_SECRET }),
+        ]);
+        return { accessToken, refreshToken };
+    }
+
+    async updateRefreshToken(userId: number, refreshToken: string) {
+        const hash = await argon2.hash(refreshToken);
+        await this.userService.updateUser(userId, {refreshToken: hash});
     }
 }

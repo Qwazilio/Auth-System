@@ -26,6 +26,13 @@ export class UserService {
         });
     }
 
+    async updateUser(id: number, data: Prisma.UserUpdateInput): Promise<Partial<User>> {
+        return this.prisma.user.update({
+            where: {id},
+            data,
+        })
+    }
+
     //Геты для конечной операции
     async getUser(id: number): Promise<Partial<User>> {
         const user = await this.prisma.user.findUnique({
