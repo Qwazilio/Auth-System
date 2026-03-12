@@ -28,9 +28,9 @@ This repository for base auth schema.
 
 ## Project setup
 
-orm - prisma
-db - pg
-hash - argon
+orm - prisma\
+db - pg\
+hash - argon\
 auth - jwt web token
 
 ## Project setup
