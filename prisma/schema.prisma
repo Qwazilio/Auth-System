@@ -5,13 +5,11 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 
@@ -19,7 +17,7 @@ datasource db {
 model User{
   id Int @id @default(autoincrement())
   login String @unique
-  email String @unique
+  email String? @unique
   password String
   //Остальные свойства
 
@@ -27,7 +25,5 @@ model User{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  //Сюда можно и токены закинуть
-  refreshToken String
+  refreshToken String?
 }

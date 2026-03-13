@@ -24,6 +24,7 @@ export class UserService {
                 updatedAt: true,
             }
         });
+
     }
 
     async updateUser(id: number, data: Prisma.UserUpdateInput): Promise<Partial<User>> {
@@ -67,7 +68,7 @@ export class UserService {
         return users;
     }
 
-    //Финды для внутренего поиска
+    //Финды для внутреннего поиска
     async findUserByEmailOrLogin(
         params: FindUserParams,
     ): Promise<User | null> {
@@ -79,5 +80,15 @@ export class UserService {
                 ],
             },
         })
+    }
+
+    async findUserByRefreshToken(refreshToken: string) {
+
+        return this.prisma.user.findFirst({
+            where: {
+                // @ts-ignore
+                refreshToken: refreshToken,
+            },
+        });
     }
 }

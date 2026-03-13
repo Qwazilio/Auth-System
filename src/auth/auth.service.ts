@@ -32,7 +32,10 @@ export class AuthService {
         return true;
     }
 
-    async login(dto: LoginDto): Promise<{access_token: string}> {
+    async login(dto: LoginDto): Promise<{
+        access_token: string,
+        refresh_token: string,
+    }> {
         const user = await this.userService.findUserByEmailOrLogin({
             login: dto.loginOrEmail.toLowerCase(),
             email: dto.loginOrEmail.toLowerCase(),
@@ -47,21 +50,25 @@ export class AuthService {
             login: user.login
         };
 
-        const tokens = await this.getTokens(user.id, user.email);
+        const tokens = await this.getTokens(payload);
 
-        return { access_token: this.jwtService.sign(payload) };
+        return {
+            access_token: tokens.accessToken,
+            refresh_token: tokens.refreshToken
+        }
     }
 
-    async getTokens(userId: number, email: string) {
+    async getTokens(payload : { sub: number, login: string}) {
         const [accessToken, refreshToken] = await Promise.all([
-            this.jwtService.signAsync({ sub: userId, email }, { expiresIn: '15m', secret: process.env.JWT_SECRET }),
-            this.jwtService.signAsync({ sub: userId, email }, { expiresIn: '7d', secret: process.env.JWT_REFRESH_SECRET }),
+            this.jwtService.signAsync(payload, { expiresIn: '15m', secret: process.env.JWT_SECRET }),
+            this.jwtService.signAsync(payload, { expiresIn: '7d', secret: process.env.JWT_REFRESH_SECRET }),
         ]);
         return { accessToken, refreshToken };
     }
 
     async updateRefreshToken(userId: number, refreshToken: string) {
         const hash = await argon2.hash(refreshToken);
-        await this.userService.updateUser(userId, {refreshToken: hash});
+        await this.userService.updateUser(userId, {refreshToken: hash} as Prisma.UserUpdateInput);
+        return { access_token: hash };
     }
 }
