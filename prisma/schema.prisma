@@ -12,18 +12,16 @@ datasource db {
   provider = "postgresql"
 }
 
-
-
-model User{
-  id Int @id @default(autoincrement())
-  login String @unique
-  email String? @unique
+model User {
+  id       Int     @id @default(autoincrement())
+  login    String  @unique
+  email    String? @unique
   password String
-  //Остальные свойства
+  // Остальные свойства
 
   isActive Boolean @default(true)
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
   refreshToken String?
 }
