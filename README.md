@@ -42,13 +42,18 @@ $ npm install
 ## Compile and run the project
 
 ```bash
+
+# prisma
+npx prisma generate
+npx prisma migrate dev --name init
+
 # development
 $ npm run start
 
-# watch mode
+# OR watch mode
 $ npm run start:dev
 
-# production mode
+# OR production mode
 $ npm run start:prod
 ```
 
@@ -57,6 +62,7 @@ add file .env in root repository and inter variable
 
 - DATABASE_URL
 - JWT_SECRET
+- JWT_REFRESH_SECRET
 
 ## Run tests
 
