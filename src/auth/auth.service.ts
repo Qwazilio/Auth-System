@@ -72,7 +72,7 @@ export class AuthService {
     });
     await this.userService.updateUser(user.id, {
       refreshToken: refreshToken,
-    } as Prisma.UserUpdateInput);
+    });
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
