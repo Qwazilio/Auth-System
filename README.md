@@ -58,11 +58,17 @@ $ npm run start:prod
 ```
 
 ## Variables
-add file .env in root repository and inter variable
+add file .env in root repository and inter variables
 
+- PORT (optional)
 - DATABASE_URL
 - JWT_SECRET
 - JWT_REFRESH_SECRET
+- SMTP_HOST
+- SMTP_PORT
+- SMTP_SECURE
+- SMTP_USER
+- SMTP_PASS
 
 ## Run tests
 
