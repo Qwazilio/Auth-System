@@ -47,6 +47,18 @@ export class AuthService {
     return true;
   }
 
+  async requireRegister(token: string): Promise<boolean> {
+    try {
+      const payload = (await this.jwtService.verifyAsync(
+        token,
+      )) as unknown as JwtPayloadDto;
+      await this.userService.updateUser(payload.sub, { isActive: true });
+    } catch (e) {
+      throw new Error(e);
+    }
+    return true;
+  }
+
   async login(dto: LoginDto): Promise<{
     access_token: string;
     refresh_token: string;
@@ -56,9 +68,10 @@ export class AuthService {
       email: dto.loginOrEmail.toLowerCase(),
     });
     if (!user) throw new UnauthorizedException();
-
     const isVerify = await argon2.verify(user?.password, dto.password);
     if (!isVerify) throw new UnauthorizedException();
+
+    if (!user.isActive) throw new Error('User unactivated');
 
     const payload = {
       sub: user.id,

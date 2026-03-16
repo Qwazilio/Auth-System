@@ -18,6 +18,7 @@ export class UserService {
         id: true,
         email: true,
         login: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -41,6 +42,7 @@ export class UserService {
         id: true,
         login: true,
         email: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -60,6 +62,7 @@ export class UserService {
         id: true,
         login: true,
         email: true,
+        isActive: true,
         createdAt: true,
         updatedAt: true,
       },
@@ -80,7 +83,6 @@ export class UserService {
   async findUserByRefreshToken(refreshToken: string) {
     return this.prisma.user.findFirst({
       where: {
-        // @ts-ignore
         refreshToken: refreshToken,
       },
     });

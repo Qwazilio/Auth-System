@@ -6,6 +6,7 @@ import {
   Headers,
   Req,
   UnauthorizedException,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -19,14 +20,18 @@ import { JwtPayloadDto } from '../jwt/dto/payload.dto';
 
 @Controller('auth')
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Public()
   @Post('register')
   async register(@Body() dto: RegisterDto): Promise<boolean> {
     return this.authService.register(dto);
+  }
+
+  @Public()
+  @Post('requireRegistration')
+  async requireRegistration(@Param('token') token: string) {
+    return await this.authService.requireRegister(token);
   }
 
   @Public()
