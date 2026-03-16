@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  BadRequestException, ForbiddenException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -54,7 +54,7 @@ export class AuthService {
       )) as unknown as JwtPayloadDto;
       await this.userService.updateUser(payload.sub, { isActive: true });
     } catch (e) {
-      throw new Error(e);
+      throw new UnauthorizedException(e);
     }
     return true;
   }
@@ -71,7 +71,7 @@ export class AuthService {
     const isVerify = await argon2.verify(user?.password, dto.password);
     if (!isVerify) throw new UnauthorizedException();
 
-    if (!user.isActive) throw new Error('User unactivated');
+    if (!user.isActive) throw new ForbiddenException('User unactivated');
 
     const payload = {
       sub: user.id,
